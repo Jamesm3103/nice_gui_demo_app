@@ -45,7 +45,6 @@ def browser():
     # Teardown: close the WebDriver
     driver.quit()
 
-
 def test_default_selection(browser):
     browser.get("http://127.0.0.1:8080")
     print(browser.title)
@@ -58,7 +57,7 @@ def test_default_selection(browser):
 def test_consuption_preview(browser):
     browser.get("http://127.0.0.1:8080")
     device = potential_consumers[1]
-    peak_power_label = browser.find_element(
+    daily_consumption_label = browser.find_element(
         By.ID, 'daily_consumption_label')
     add_device_dropdown_selection = browser.find_element(
         By.ID, 'add_device_dropdown_selection')
@@ -67,7 +66,7 @@ def test_consuption_preview(browser):
     option_xpath = f"//div[@class='q-item__label']/span[contains(text(), '{device['device_name']}')]"
     option = browser.find_element(By.XPATH, option_xpath)
     option.click()
-    assert peak_power_label.text == f"Daily consumption: {device['peak_power']} wH"
+    assert daily_consumption_label.text == f"Daily consumption: {device['daily_consumption']} Wh"
 
 
 def test_consumers_table(browser):
@@ -79,8 +78,6 @@ def test_consumers_table(browser):
     assert amount_of_rows == 0
     add_device_button = browser.find_element(
         By.ID, 'add_selected_device_button')
-    add_device_button.click()
-    time.sleep(1)
     add_device_button.click()
     time.sleep(1)
     amount_of_rows = len(selected_consumers_table.find_elements(
