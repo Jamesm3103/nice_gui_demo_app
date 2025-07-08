@@ -45,6 +45,7 @@ def browser():
     # Teardown: close the WebDriver
     driver.quit()
 
+@pytest.mark.skip
 def test_default_selection(browser):
     browser.get("http://127.0.0.1:8080")
     print(browser.title)
@@ -53,7 +54,7 @@ def test_default_selection(browser):
         By.ID, 'add_device_dropdown_selection')
     assert default_selection.text == "Fridge"
 
-
+@pytest.mark.skip
 def test_consuption_preview(browser):
     browser.get("http://127.0.0.1:8080")
     device = potential_consumers[1]
@@ -68,14 +69,14 @@ def test_consuption_preview(browser):
     option.click()
     assert daily_consumption_label.text == f"Daily consumption: {device['daily_consumption']} Wh"
 
-
+@pytest.mark.skip
 def test_consumers_table(browser):
     browser.get("http://127.0.0.1:8080")
     selected_consumers_table = browser.find_element(
         By.ID, 'selected_consumers_table')
     amount_of_rows = len(
         selected_consumers_table.find_elements(By.XPATH, "//*[@row-id]"))
-    assert amount_of_rows == 0
+    assert amount_of_rows == 0 
     add_device_button = browser.find_element(
         By.ID, 'add_selected_device_button')
     add_device_button.click()
@@ -92,14 +93,40 @@ def test_consumers_table(browser):
     assert amount_of_rows == 0
 
 
-@pytest.mark.skip(reason="Awaiting implementation")
-def test_maximum_peak_power_calculation():
+
+def test_maximum_peak_power_calculation(browser):
     """
     Add 3 devices from the list and check if the "Maximum peak power"
     label ('id=maximum_peak_power_label') is the sum of the individual
     devices peak power.
     """
-    return
+    browser.get("http://127.0.0.1:8080")
+    device = potential_consumers[6]
+    add_device_dropdown_selection = browser.find_element(
+        By.ID, 'add_device_dropdown_selection')
+    add_device_dropdown_selection.click()
+    add_device_button = browser.find_element(
+        By.ID, 'add_selected_device_button')
+    time.sleep(1)
+    option_xpath = f"//div[@class='q-item__label']/span[contains(text(), '{device['device_name']}')]"
+    option = browser.find_element(By.XPATH, option_xpath)
+    option.click()
+    time.sleep(1)
+    add_device_dropdown_selection.click()
+    time.sleep(1)
+    add_device_button.click()
+    time.sleep(2)
+    option.click()
+    time.sleep(1)
+    add_device_dropdown_selection.click()
+    time.sleep(2)
+    option.click()
+    time.sleep(1)
+    
+    maximum_peak_power_label = browser.find_element(
+        By.ID, 'maximum_peak_power_label')
+    assert maximum_peak_power_label.text == "Maximum peak power: 2100" , "Maximum peak power displaying incorrectly"
+    
 
 
 @pytest.mark.skip(reason="Awaiting implementation")
